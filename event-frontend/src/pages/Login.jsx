@@ -19,7 +19,7 @@ const Login = () => {
     if (isAuthenticated) {
       navigate("/home");
     }
-  }, [isAuthenticated]);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

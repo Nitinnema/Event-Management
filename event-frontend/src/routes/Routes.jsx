@@ -13,14 +13,12 @@ import MyEventList from "../pages/MyEventList";
 import EventDetail from "../pages/EventDetail";
 import PrivateRoute from "./PrivateRoute";
 
-const isAuthenticated = !!localStorage.getItem("token");
-
 export const Router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<MainLayout />}>
       <Route index element={<Login />} />
       <Route path="signup" element={<Signup />} />
-      <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
+      <Route element={<PrivateRoute />}>
         <Route path="home" element={<UserHome />} />
         <Route path="create-event" element={<CreateEvent />} />
         <Route path="edit-event" element={<EditEvent />} />
