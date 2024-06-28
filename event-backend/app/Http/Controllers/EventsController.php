@@ -53,25 +53,40 @@ class EventsController extends Controller
         return response()->json(null, 204);
     }
 
-    public function attend(Event $event)
+    public function attend($event_id, $user_id)
     {
-        $attending = $event->attendees()->where('user_id', Auth::id())->first();
-        if (!null($attending)) {
-            return null;
-        };
-        $attending = $event->$attendees()->create([
-            'user_id' => Auth::id()
-        ]);
+        $event = Event::find($event_id);
+
+        if (!$event) {
+            return response()->json([
+                'message' => 'Event not found'
+            ], 404);
+        }
+        $event->attendees()->attach($user_id);
+
         return response()->json([
-            $attending,
+            'event_id' => $event_id,
+            'user_id' => $user_id,
             'message' => 'Attendee added successfully'
         ], 200);
     }
 
-    public function unattend(Event $event)
+    public function unattend($event_id, $user_id)
     {
-        $user = auth()->user();
-        $event->attendees()->detach($user->id);
-        return response()->json(['message' => 'Attendee removed successfully'], 200);
+        $event = Event::find($event_id);
+
+    if (!$event) {
+        return response()->json([
+            'message' => 'Event not found'
+        ], 404);
+    }
+
+    $event->attendees()->detach($user_id);
+
+    return response()->json([
+        'event_id' => $event_id,
+        'user_id' => $user_id,
+        'message' => 'Attendee removed successfully'
+    ], 200);
     }
 }

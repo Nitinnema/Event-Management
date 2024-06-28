@@ -4,6 +4,8 @@ import axios from "axios";
 
 const UserHome = () => {
   const [events, setEvents] = useState([]);
+  const [att, setAtt] = useState([]);
+  const [attMsg, setAttMsg] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,19 +33,45 @@ const UserHome = () => {
     navigate(`/events/${id}`);
   };
 
-  const handleAttend = async (id, e) => {
+  const handleAttend = async (event_id, e) => {
     e.stopPropagation();
-    try {
-      const response = await axios.post(
-        `http://localhost:8000/api/events/${id}/attend`
-      );
-      console.log(response, "ATTENED");
-      // if (response.status === 200) {
-      //   console.log(response);
-      //   setEvent(response.data);
-      // }
-    } catch (error) {
-      console.error("Error creating event:", error);
+    const user_id = JSON.parse(localStorage.getItem("userData")).id;
+    if (att.includes(event_id.toString())) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:8000/api/events/${event_id}/attend/${user_id}`
+        );
+        if (response.status === 200) {
+          setAtt((prev) => {
+            if (prev.includes(response.data.event_id)) {
+              return prev.filter((id) => id !== response.data.event_id);
+            } else {
+              return [...prev, response.data.event_id];
+            }
+          });
+          console.log(att, "LLLL");
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error creating event:", error);
+      }
+    } else {
+      try {
+        const response = await axios.post(
+          `http://localhost:8000/api/events/${event_id}/attend/${user_id}`
+        );
+        if (response.status === 200) {
+          setAtt((prev) => {
+            if (prev.includes(response.data.event_id)) {
+            } else {
+              return [...prev, response.data.event_id];
+            }
+          });
+          alert(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error creating event:", error);
+      }
     }
   };
 
@@ -97,7 +125,7 @@ const UserHome = () => {
                     onClick={(e) => handleAttend(event.id, e)}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                   >
-                    Attend
+                    {att.includes(event.id.toString()) ? "Unattend" : "Attend"}
                   </button>
                 </td>
               </tr>

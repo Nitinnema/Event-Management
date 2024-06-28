@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +12,14 @@ const Login = () => {
     password: "",
   });
   const [errors, setErrors] = useState({});
+
+  const isAuthenticated = !!localStorage.getItem("token");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/home");
+    }
+  }, [isAuthenticated]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
